@@ -1,93 +1,121 @@
 # Publishing Guide
 
-This guide walks you through publishing `smooth-auto-scroll` to npm via **GitHub Actions only**.
+This guide walks you through publishing `smooth-auto-scroll` to npm using **pure git-flow**.
 
-## 🚀 GitHub Actions Only
+## 🔄 Pure Git-Flow Process
 
-This package uses **automated publishing** triggered by GitHub Actions. Local npm publishing is completely disabled for security and consistency.
+This package uses **pure git-flow** where release branches determine the version, and merging to main triggers automated publishing.
 
 ## Prerequisites
 
-### 1. GitHub Repository Setup
-
+### GitHub Repository Setup
 **Required GitHub Secret:**
-
 - Add `NPM_TOKEN` to GitHub repository secrets
 - Go to Settings → Secrets and variables → Actions
 - Add new repository secret: `NPM_TOKEN`
 
-### 2. Check Package Name Availability
-
+To get your npm token:
 ```bash
-npm info smooth-auto-scroll
-# Should return 404 if available
+npm login  # Login to npm
+npm token create --read-only=false  # Create automation token
 ```
 
 ## Release Process
 
-### GitHub Actions UI 🎯
-
-**Via GitHub UI:**
-
-1. Go to **Actions** tab in your GitHub repository
-2. Click **Manual Release** workflow
-3. Click **Run workflow** button
-4. Select version type: `patch` | `minor` | `major` | `prerelease`
-5. For prerelease: choose identifier (`beta`, `alpha`, `rc`, etc.)
-6. Click **Run workflow**
-
-#### What Happens Automatically
-
-1. **Version bump** - Updates package.json
-2. **Git tag created** - Creates version tag (e.g., `v1.0.1`)
-3. **Push to GitHub** - Pushes commit and tag
-4. **GitHub Action triggers** - Runs on tag push
-5. **Build & test** - Builds package and runs tests
-6. **Version verification** - Ensures tag matches package.json
-7. **npm publish** - Publishes to npm registry
-8. **GitHub Release** - Creates release with changelog
-
-### Alternative: Manual Tag Creation
-
-If you prefer manual control over git:
+### 1. Create Release Branch 🌿
 
 ```bash
-# Update version in package.json manually, then:
+# Start from develop
+git checkout develop
+git pull origin develop
+
+# Create release branch
+git checkout -b release/v1.2.3
+
+# Update version in package.json (manually or with npm)
+npm version 1.2.3 --no-git-tag-version
+
+# Commit version change
 git add package.json package-lock.json
-git commit -m "chore: bump version to 1.0.1"
-git tag v1.0.1
-git push origin main --follow-tags
+git commit -m "chore: prepare release v1.2.3"
+
+# Push release branch
+git push -u origin release/v1.2.3
 ```
 
-## Pre-Release Checklist
+### 2. Create PR and Merge ➡️
 
-Run this before creating a release:
+1. **Create PR**: `release/v1.2.3` → `main`
+2. **Review changes**
+3. **Merge PR**
+
+### 3. Automatic Publishing 🚀
+
+**When you merge to main**, the workflow automatically:
+
+1. ✅ **Detects version change** in package.json
+2. ✅ **Builds and tests** the package
+3. ✅ **Creates git tag** (e.g., `v1.2.3`)
+4. ✅ **Publishes to npm**
+5. ✅ **Creates GitHub release** with changelog
+
+**If no version change is detected, nothing happens** - safe merges! ✨
+
+### 4. Clean Up 🧹
 
 ```bash
-npm run build        # Build the package
-npm run publish:check  # Dry-run npm publish (local test only)
+# Merge back to develop
+git checkout develop
+git merge main
+git push origin develop
+
+# Delete release branch
+git branch -d release/v1.2.3
+git push origin --delete release/v1.2.3
 ```
 
-### What Gets Published
+## Version Types
 
-- [x] Built files in `dist/` directory
-- [x] `package.json` and `package-lock.json`
-- [x] `README.md` and `LICENSE`
-- [x] TypeScript definitions (`.d.ts` files)
-- [x] Both CommonJS (`.cjs`) and ESM (`.js`) formats
+### Semantic Versioning
+- **Patch** (`1.0.0` → `1.0.1`): Bug fixes
+- **Minor** (`1.0.0` → `1.1.0`): New features
+- **Major** (`1.0.0` → `2.0.0`): Breaking changes
+- **Prerelease** (`1.0.0` → `1.1.0-beta.1`): Beta/alpha versions
 
-### What Gets Excluded
+### Examples
+```bash
+# Patch release
+npm version patch --no-git-tag-version
 
-- [x] Source files (`src/` directory)
-- [x] Demo files (`demo/` directory)
-- [x] Development configs (`vite.config.ts`, `tsup.config.ts`, etc.)
-- [x] GitHub workflows (`.github/` directory)
-- [x] Development dependencies
+# Minor release  
+npm version minor --no-git-tag-version
 
-## Post-Publishing
+# Major release
+npm version major --no-git-tag-version
 
-### Verify Publication
+# Prerelease
+npm version prerelease --preid=beta --no-git-tag-version
+```
 
+## What Gets Published
+
+### Included ✅
+- Built files in `dist/` directory
+- `package.json` and `package-lock.json`
+- `README.md` and `LICENSE`
+- TypeScript definitions (`.d.ts` files)
+- Both CommonJS (`.cjs`) and ESM (`.js`) formats
+
+### Excluded ❌
+- Source files (`src/` directory)
+- Demo files (`demo/` directory)
+- Development configs (`vite.config.ts`, `tsup.config.ts`, etc.)
+- GitHub workflows (`.github/` directory)
+- Development dependencies
+
+## Verification
+
+### Check Publication
 ```bash
 # Check if package is published
 npm info smooth-auto-scroll
@@ -99,39 +127,31 @@ npm install smooth-auto-scroll
 ```
 
 ### Monitor Release
-
-- Check GitHub Actions for build status
-- Verify npm package page: https://www.npmjs.com/package/smooth-auto-scroll
-- Test the demo: https://marcderhammer.github.io/smooth-auto-scroll/
+- **GitHub Actions**: Check workflow status
+- **npm**: https://www.npmjs.com/package/smooth-auto-scroll
+- **Demo**: https://marcderhammer.github.io/smooth-auto-scroll/
 
 ## Troubleshooting
 
-### "Version mismatch" Error
+### "No release triggered"
+- Ensure package.json version changed from previous commit
+- Check that the version doesn't already exist as a git tag
 
-- Ensure package.json version matches the git tag
-- Tag format must be `v1.2.3` (with 'v' prefix)
-
-### "NPM_TOKEN invalid" Error
-
-- Regenerate npm token: `npm token create --type=publish`
-- Update GitHub secret with new token
-
-### "Build failed" Error
-
+### "Build failed"
 - Check GitHub Actions logs
-- Ensure all tests pass locally
-- Verify TypeScript compiles without errors
+- Ensure all tests pass locally: `npm test`
+- Verify TypeScript compiles: `npm run build`
 
-### Manual npm publish blocked
-
-- This is intentional! Use GitHub Actions → Manual Release
-- Or create tags manually and let GitHub Actions handle publishing
+### "npm publish failed"
+- Check `NPM_TOKEN` is valid and has publish permissions
+- Ensure package name isn't taken
+- Verify you're not publishing same version twice
 
 ## Security Notes
 
-- ✅ npm tokens are stored securely in GitHub Secrets
-- ✅ Publishing only happens via GitHub Actions
+- ✅ npm tokens stored securely in GitHub Secrets
+- ✅ Publishing only via GitHub Actions on main branch
 - ✅ All releases are tagged and traceable
-- ✅ Build and test verification before publishing
-- ✅ No local npm access required
-- ✅ Team-friendly workflow via GitHub UI
+- ✅ Version-controlled release process
+- ✅ No manual npm access required
+- ✅ Safe merges (no accidental releases)
