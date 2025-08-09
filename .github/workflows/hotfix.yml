@@ -1,0 +1,75 @@
+name: Hotfix Release
+
+on:
+  push:
+    branches: ["hotfix/*"]
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  hotfix-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build library
+        run: npm run build
+
+      - name: Run tests (if any)
+        run: npm test --if-present
+
+      - name: Extract hotfix version
+        id: version
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          VERSION=${BRANCH_NAME#hotfix/}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Hotfix version: $VERSION"
+
+      - name: Update package.json version
+        run: |
+          npm version ${{ steps.version.outputs.version }} --no-git-tag-version
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.version }}"
+
+      - name: Create Pull Request to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "hotfix: release ${{ steps.version.outputs.version }}"
+          title: "Hotfix Release ${{ steps.version.outputs.version }}"
+          body: |
+            ## Hotfix Release ${{ steps.version.outputs.version }}
+            
+            This is an automated hotfix release.
+            
+            ### Changes
+            - Hotfix for critical issues
+            
+            ### Checklist
+            - [x] Code builds successfully
+            - [x] Tests pass (if any)
+            - [x] Version bumped in package.json
+            
+            **This PR will trigger a release when merged to main.**
+          branch: hotfix/${{ steps.version.outputs.version }}
+          base: main

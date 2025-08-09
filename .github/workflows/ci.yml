@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [develop, "feature/*", "bugfix/*", "hotfix/*"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint --if-present
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build library
+        run: npm run build
+
+      - name: Build demo
+        run: npm run demo:build
+
+      - name: Run tests
+        run: npm test --if-present
+
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check package.json version
+        run: |
+          echo "Current version: $(node -p "require('./package.json').version")"
+
+      - name: Dry run npm publish
+        run: npm publish --dry-run
+
+      - name: Check for build artifacts
+        run: |
+          npm run build
+          echo "Checking dist directory:"
+          ls -la dist/
+          echo "Checking file sizes:"
+          du -h dist/*
