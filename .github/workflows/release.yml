@@ -56,7 +56,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -76,6 +76,6 @@ jobs:
             Try the interactive demo: https://marcderhammer.github.io/smooth-auto-scroll/
             
             ### Full Changelog
-            See all changes: https://github.com/marcderhammer/smooth-auto-scroll/compare/v0.1.0...${{ steps.get_version.outputs.VERSION }}
+            See all changes: https://github.com/marcderhammer/smooth-auto-scroll/compare/${{ steps.get_previous_tag.outputs.PREVIOUS_TAG || 'HEAD~1' }}...${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
