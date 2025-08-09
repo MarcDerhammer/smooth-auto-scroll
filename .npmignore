@@ -1,0 +1,46 @@
+# Source files (only publish dist/)
+src/
+demo/
+
+# Development files
+.gitignore
+.eslintrc.*
+.prettierrc.*
+tsconfig.json
+vite.config.ts
+tsup.config.ts
+
+# Documentation (keep README.md)
+docs/
+
+# Tests
+test/
+tests/
+__tests__/
+*.test.*
+*.spec.*
+
+# Development dependencies
+node_modules/
+
+# Build tools
+.github/
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment files
+.env*
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/
