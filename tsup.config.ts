@@ -11,6 +11,8 @@ export default defineConfig({
   minify: false,
   external: ["react", "react-dom"],
   esbuildOptions(options) {
-    options.jsx = "automatic";
+    options.jsx = "transform";
+    options.jsxFactory = "React.createElement";
+    options.jsxFragment = "React.Fragment";
   },
 });
