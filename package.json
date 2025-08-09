@@ -1,6 +1,6 @@
 {
   "name": "smooth-auto-scroll",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Smooth auto-scroll React hook and component for ultra-smooth motion at any speed.",
   "license": "MIT",
   "author": "Marc Derhammer <marc.derhammer@gmail.com>",
