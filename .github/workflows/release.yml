@@ -68,26 +68,25 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          name: Release ${{ steps.get_version.outputs.VERSION }}
           body: |
             ## Changes in ${{ steps.get_version.outputs.VERSION }}
-            
+
             🚀 **smooth-auto-scroll** has been updated!
-            
+
             ### Installation
             ```bash
             npm install smooth-auto-scroll@${{ steps.get_version.outputs.VERSION }}
             ```
-            
+
             ### Demo
             Try the interactive demo: https://marcderhammer.github.io/smooth-auto-scroll/
-            
+
             ### Full Changelog
             See all changes: https://github.com/marcderhammer/smooth-auto-scroll/compare/${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}...${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
+          generate_release_notes: true
