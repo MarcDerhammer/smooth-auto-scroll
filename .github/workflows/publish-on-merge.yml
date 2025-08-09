@@ -113,7 +113,14 @@ jobs:
           git checkout develop
           git merge origin/main --no-edit
           git push origin develop
-          echo "✅ Updated develop branch with release changes"
+          if git ls-remote --exit-code --heads origin develop; then
+            git checkout develop
+            git merge origin/main --no-edit
+            git push origin develop
+            echo "✅ Updated develop branch with release changes"
+          else
+            echo "⚠️  'develop' branch does not exist. Skipping sync."
+          fi
 
       - name: No release needed
         if: steps.version_check.outputs.version_changed == 'false'
