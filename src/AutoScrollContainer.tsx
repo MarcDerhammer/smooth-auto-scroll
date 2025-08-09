@@ -12,27 +12,24 @@ export type AutoScrollContainerProps = {
   accelerationTime?: number;
   pauseEvents?: Array<keyof GlobalEventHandlersEventMap>;
   resumeEvents?: Array<keyof GlobalEventHandlersEventMap>;
-  direction?: "down" | "up" | "both";
-  startDirection?: "down" | "up";
-  reverseOnEnd?: boolean;
+  direction?: "down" | "up";
   resumeDelay?: number;
   pauseOnHover?: boolean;
   pauseOnFocus?: boolean;
   startOffset?: number;
   endOffset?: number;
   respectReducedMotion?: boolean;
-  speedMultiplier?: number;
   // Callbacks
   onStart?: () => void;
   onPause?: () => void;
   onResume?: () => void;
   onReachEnd?: () => void;
   onReachTop?: () => void;
-  onDirectionChange?: (direction: "down" | "up") => void;
+
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
 export const AutoScrollContainer: React.FC<AutoScrollContainerProps> = ({
   containerRef,
@@ -46,25 +43,22 @@ export const AutoScrollContainer: React.FC<AutoScrollContainerProps> = ({
   pauseEvents,
   resumeEvents,
   direction,
-  startDirection,
-  reverseOnEnd,
   resumeDelay,
   pauseOnHover,
   pauseOnFocus,
   startOffset,
   endOffset,
   respectReducedMotion,
-  speedMultiplier,
   // Callbacks
   onStart,
   onPause,
   onResume,
   onReachEnd,
   onReachTop,
-  onDirectionChange,
   className,
   style,
   children,
+  ...restProps
 }) => {
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -84,22 +78,18 @@ export const AutoScrollContainer: React.FC<AutoScrollContainerProps> = ({
     pauseEvents,
     resumeEvents,
     direction,
-    startDirection,
-    reverseOnEnd,
     resumeDelay,
     pauseOnHover,
     pauseOnFocus,
     startOffset,
     endOffset,
     respectReducedMotion,
-    speedMultiplier,
     // Callbacks
     onStart,
     onPause,
     onResume,
     onReachEnd,
     onReachTop,
-    onDirectionChange,
   });
 
   useEffect(() => {
@@ -117,7 +107,7 @@ export const AutoScrollContainer: React.FC<AutoScrollContainerProps> = ({
   }, [containerRef]);
 
   return (
-    <div ref={outerRef} className={className} style={style}>
+    <div ref={outerRef} className={className} style={style} {...restProps}>
       <div ref={innerRef}>{children}</div>
     </div>
   );

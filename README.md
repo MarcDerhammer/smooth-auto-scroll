@@ -1,5 +1,15 @@
 # smooth-auto-scroll
 
+[![npm version](https://badge.fury.io/js/smooth-auto-scroll.svg)](https://badge.fury.io/js/smooth-auto-scroll)
+[![npm downloads](https://img.shields.io/npm/dm/smooth-auto-scroll.svg)](https://www.npmjs.com/package/smooth-auto-scroll)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
+[![Build Status](https://github.com/marcderhammer/smooth-auto-scroll/workflows/CI/badge.svg)](https://github.com/marcderhammer/smooth-auto-scroll/actions)
+[![codecov](https://codecov.io/gh/marcderhammer/smooth-auto-scroll/branch/main/graph/badge.svg)](https://codecov.io/gh/marcderhammer/smooth-auto-scroll)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/smooth-auto-scroll)](https://bundlephobia.com/package/smooth-auto-scroll)
+[![React](https://img.shields.io/badge/React-%3E%3D17-blue.svg)](https://reactjs.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/marcderhammer/smooth-auto-scroll/pulls)
+
 **React hook and component** for smooth auto-scroll. Perfect for continuous scrolling at any speed with buttery-smooth motion.
 
 > ⚛️ **React Only**: This library requires React 17+ and uses React hooks. For vanilla JS or other frameworks, you'll need a different solution.
@@ -52,7 +62,7 @@ useSmoothAutoScroll({ containerRef, innerRef, pxPerSecond: 5 });
 - `capDtMs`: number — frame delta cap in milliseconds, default `16.67` (~60fps)
 - `smoothingFactor`: number — velocity smoothing factor, default `0.1`
 - `accelerationTime`: number — time to reach full speed in ms, default `1000`
-- `speedMultiplier`: number — speed multiplier, default `1`
+
 - `respectReducedMotion`: boolean — respect user's reduced motion preference, default `true`
 
 ### Scroll Boundaries
@@ -64,9 +74,7 @@ useSmoothAutoScroll({ containerRef, innerRef, pxPerSecond: 5 });
 
 ### Direction & Behavior
 
-- `direction`: "down" | "up" | "both" — scroll direction, default `"down"`
-- `startDirection`: "down" | "up" — initial direction when `direction="both"`, default `"down"`
-- `reverseOnEnd`: boolean — reverse direction at boundaries, default `false`
+- `direction`: "down" | "up" — scroll direction, default `"down"`
 
 ### Event Configuration
 
@@ -83,10 +91,10 @@ useSmoothAutoScroll({ containerRef, innerRef, pxPerSecond: 5 });
 - `onResume`: () => void — called when scrolling resumes
 - `onReachEnd`: () => void — called when reaching bottom/end
 - `onReachTop`: () => void — called when reaching top
-- `onDirectionChange`: (direction: "down" | "up") => void — called when direction changes
 
 ### Container Props (AutoScrollContainer only)
 
+- `containerRef`: React.RefObject<HTMLElement> — optional external container ref
 - `className`: string — CSS class for container
 - `style`: React.CSSProperties — inline styles for container
 - `children`: React.ReactNode — content to scroll
