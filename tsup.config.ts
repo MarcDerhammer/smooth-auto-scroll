@@ -9,10 +9,5 @@ export default defineConfig({
   format: ["esm", "cjs"],
   target: "es2020",
   minify: false,
-  external: ["react", "react-dom"],
-  esbuildOptions(options) {
-    options.jsx = "transform";
-    options.jsxFactory = "React.createElement";
-    options.jsxFragment = "React.Fragment";
-  },
+  external: ["react", "react-dom", "react/jsx-runtime"],
 });

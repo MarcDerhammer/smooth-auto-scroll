@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 export type SmoothAutoScrollOptions = {
   enabled?: boolean;
@@ -12,23 +12,19 @@ export type SmoothAutoScrollOptions = {
   resumeEvents?: Array<keyof GlobalEventHandlersEventMap>;
   smoothingFactor?: number;
   accelerationTime?: number;
-  direction?: "down" | "up" | "both";
-  startDirection?: "down" | "up";
-  reverseOnEnd?: boolean;
+  direction?: "down" | "up";
   resumeDelay?: number;
   pauseOnHover?: boolean;
   pauseOnFocus?: boolean;
   startOffset?: number;
   endOffset?: number;
   respectReducedMotion?: boolean;
-  speedMultiplier?: number;
   // Callbacks
   onStart?: () => void;
   onPause?: () => void;
   onResume?: () => void;
   onReachEnd?: () => void;
   onReachTop?: () => void;
-  onDirectionChange?: (direction: "down" | "up") => void;
 };
 
 export function useSmoothAutoScroll({
@@ -44,43 +40,35 @@ export function useSmoothAutoScroll({
   smoothingFactor = 0.1, // For smooth velocity changes
   accelerationTime = 1000, // 1 second to reach full speed
   direction = "down",
-  startDirection = "down",
-  reverseOnEnd = false,
   resumeDelay = 0,
   pauseOnHover = false,
   pauseOnFocus = false,
   startOffset = 0,
   endOffset = 0,
   respectReducedMotion = true,
-  speedMultiplier = 1,
   // Callbacks
   onStart,
   onPause,
   onResume,
   onReachEnd,
   onReachTop,
-  onDirectionChange,
 }: SmoothAutoScrollOptions) {
   const rafIdRef = useRef<number | null>(null);
   const lastTsRef = useRef<number | null>(null);
   const accumRef = useRef(0);
   const pausedRef = useRef(false);
-  const reachedEndRef = useRef(false);
-  const reachedTopRef = useRef(false);
   const startTimeRef = useRef<number | null>(null);
   const currentVelocityRef = useRef(0);
   const targetVelocityRef = useRef(pxPerSecond);
-  const currentDirectionRef = useRef<"down" | "up">(
-    direction === "both" ? startDirection : direction
-  );
+  const currentDirectionRef = useRef<"down" | "up">(direction);
   const hasStartedRef = useRef(false);
   const resumeTimeoutRef = useRef<number | null>(null);
   const reducedMotionRef = useRef(false);
 
-  const resetVisualShift = () => {
+  const resetVisualShift = useCallback(() => {
     const inner = innerRef.current;
     if (inner) inner.style.transform = "";
-  };
+  }, [innerRef]);
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -103,13 +91,10 @@ export function useSmoothAutoScroll({
     lastTsRef.current = null;
     accumRef.current = 0;
     pausedRef.current = false;
-    reachedEndRef.current = false;
-    reachedTopRef.current = false;
     startTimeRef.current = null;
     currentVelocityRef.current = 0;
-    targetVelocityRef.current = pxPerSecond * speedMultiplier;
-    currentDirectionRef.current =
-      direction === "both" ? startDirection : direction;
+    targetVelocityRef.current = pxPerSecond;
+    currentDirectionRef.current = direction;
     hasStartedRef.current = false;
     resetVisualShift();
 
@@ -143,11 +128,8 @@ export function useSmoothAutoScroll({
 
       const currentDirection = currentDirectionRef.current;
       const isScrollingDown = currentDirection === "down";
-      const canScroll = isScrollingDown
-        ? !reachedEndRef.current
-        : !reachedTopRef.current;
 
-      if (!pausedRef.current && canScroll) {
+      if (!pausedRef.current) {
         // Call onStart callback on first movement
         if (!hasStartedRef.current) {
           hasStartedRef.current = true;
@@ -155,7 +137,7 @@ export function useSmoothAutoScroll({
         }
 
         // Smooth acceleration from 0 to target velocity
-        const baseVelocity = pxPerSecond * speedMultiplier;
+        const baseVelocity = pxPerSecond;
         let targetVelocity: number;
 
         if (accelerationTime <= 0) {
@@ -207,35 +189,11 @@ export function useSmoothAutoScroll({
         const atTop = scrollTop <= topTolerance + startOffset;
 
         if (isScrollingDown && atBottom) {
-          reachedEndRef.current = true;
           onReachEnd?.();
           resetVisualShift();
-
-          if (direction === "both" && reverseOnEnd) {
-            currentDirectionRef.current = "up";
-            reachedEndRef.current = false;
-            startTimeRef.current = ts;
-            onDirectionChange?.("up");
-          }
         } else if (!isScrollingDown && atTop) {
-          reachedTopRef.current = true;
           onReachTop?.();
           resetVisualShift();
-
-          if (direction === "both" && reverseOnEnd) {
-            currentDirectionRef.current = "down";
-            reachedTopRef.current = false;
-            startTimeRef.current = ts;
-            onDirectionChange?.("down");
-          }
-        } else {
-          // Reset boundary flags if we're no longer at the boundary
-          if (reachedEndRef.current && !atBottom) {
-            reachedEndRef.current = false;
-          }
-          if (reachedTopRef.current && !atTop) {
-            reachedTopRef.current = false;
-          }
         }
       }
 
@@ -258,16 +216,13 @@ export function useSmoothAutoScroll({
     smoothingFactor,
     accelerationTime,
     direction,
-    startDirection,
-    reverseOnEnd,
     startOffset,
     endOffset,
     respectReducedMotion,
-    speedMultiplier,
     onStart,
     onReachEnd,
     onReachTop,
-    onDirectionChange,
+    resetVisualShift,
   ]);
 
   // Update target velocity when pxPerSecond changes without restarting the entire animation
@@ -279,7 +234,7 @@ export function useSmoothAutoScroll({
     const el = containerRef.current;
     if (!el) return;
 
-    const onUser = () => {
+    const onUser = (_event: Event) => {
       if (!pausedRef.current) {
         onPause?.();
       }
@@ -296,27 +251,10 @@ export function useSmoothAutoScroll({
     };
 
     const onScroll = () => {
-      // Reset boundary flags if user scrolls away from boundaries
-      if (el) {
-        const scrollTop = el.scrollTop;
-        const scrollHeight = el.scrollHeight;
-        const clientHeight = el.clientHeight;
-
-        const atBottom =
-          scrollTop + clientHeight >=
-          scrollHeight - bottomTolerance - endOffset;
-        const atTop = scrollTop <= topTolerance + startOffset;
-
-        if (reachedEndRef.current && !atBottom) {
-          reachedEndRef.current = false;
-        }
-        if (reachedTopRef.current && !atTop) {
-          reachedTopRef.current = false;
-        }
-      }
+      // User scroll events can be handled here if needed in the future
     };
 
-    const onResumeEvent = () => {
+    const onResumeEvent = (_event: Event) => {
       if (resumeDelay > 0) {
         resumeTimeoutRef.current = setTimeout(() => {
           if (pausedRef.current) {
@@ -336,15 +274,15 @@ export function useSmoothAutoScroll({
       }
     };
 
-    const onHover = () => {
+    const onHover = (event: Event) => {
       if (pauseOnHover) {
-        onUser();
+        onUser(event);
       }
     };
 
-    const onFocus = () => {
+    const onFocus = (event: Event) => {
       if (pauseOnFocus) {
-        onUser();
+        onUser(event);
       }
     };
 
@@ -377,10 +315,10 @@ export function useSmoothAutoScroll({
 
     return () => {
       for (const evt of pauseEvents) {
-        el.removeEventListener(evt, onUser as any);
+        el.removeEventListener(evt, onUser);
       }
       for (const evt of resumeEvents) {
-        el.removeEventListener(evt, onResumeEvent as any);
+        el.removeEventListener(evt, onResumeEvent);
       }
       el.removeEventListener("scroll", onScroll);
 
@@ -412,6 +350,7 @@ export function useSmoothAutoScroll({
     pauseOnFocus,
     onPause,
     onResume,
+    resetVisualShift,
   ]);
 
   return {
@@ -432,33 +371,12 @@ export function useSmoothAutoScroll({
     },
     reset: () => {
       accumRef.current = 0;
-      reachedEndRef.current = false;
-      reachedTopRef.current = false;
       hasStartedRef.current = false;
-      currentDirectionRef.current =
-        direction === "both" ? startDirection : direction;
+      currentDirectionRef.current = direction;
       resetVisualShift();
-    },
-    changeDirection: (newDirection: "down" | "up") => {
-      if (
-        direction === "both" &&
-        newDirection !== currentDirectionRef.current
-      ) {
-        currentDirectionRef.current = newDirection;
-        startTimeRef.current = performance.now();
-        reachedEndRef.current = false;
-        reachedTopRef.current = false;
-        onDirectionChange?.(newDirection);
-      }
     },
     get paused() {
       return pausedRef.current;
-    },
-    get reachedEnd() {
-      return reachedEndRef.current;
-    },
-    get reachedTop() {
-      return reachedTopRef.current;
     },
     get currentDirection() {
       return currentDirectionRef.current;
