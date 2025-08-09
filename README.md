@@ -4,6 +4,10 @@
 
 > ⚛️ **React Only**: This library requires React 17+ and uses React hooks. For vanilla JS or other frameworks, you'll need a different solution.
 
+## 🚀 **[Try the Interactive Demo](https://marcderhammer.github.io/smooth-auto-scroll/)**
+
+Experience all the features live with customizable controls and real-time code generation.
+
 ## Install
 
 ```bash
@@ -12,6 +16,8 @@ npm i smooth-auto-scroll
 ```
 
 ## Usage
+
+> 💡 **See it in action**: [Interactive Demo](https://marcderhammer.github.io/smooth-auto-scroll/) with live controls and code examples.
 
 ```tsx
 import { AutoScrollContainer } from "smooth-auto-scroll";
