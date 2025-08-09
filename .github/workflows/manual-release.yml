@@ -43,8 +43,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          rm -rf node_modules package-lock.json
-          npm install
+          # Clean install to fix optional dependencies issue
+          rm -rf node_modules
+          npm ci
 
       - name: Configure Git
         run: |
