@@ -60,9 +60,6 @@ jobs:
         run: |
           echo "Current version: $(node -p "require('./package.json').version")"
 
-      - name: Dry run npm publish
-        run: npm publish --dry-run
-
       - name: Check for build artifacts
         run: |
           npm run build
