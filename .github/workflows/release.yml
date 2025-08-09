@@ -24,12 +24,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: "npm"
           registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: |
-          rm -rf node_modules package-lock.json
-          npm install
+          # Clean install to fix optional dependencies issue
+          rm -rf node_modules
+          npm ci
 
       - name: Build library
         run: npm run build
