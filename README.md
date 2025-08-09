@@ -8,7 +8,6 @@
 [![codecov](https://codecov.io/gh/marcderhammer/smooth-auto-scroll/branch/main/graph/badge.svg)](https://codecov.io/gh/marcderhammer/smooth-auto-scroll)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/smooth-auto-scroll)](https://bundlephobia.com/package/smooth-auto-scroll)
 [![React](https://img.shields.io/badge/React-%3E%3D17-blue.svg)](https://reactjs.org/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/marcderhammer/smooth-auto-scroll/pulls)
 
 **React hook and component** for smooth auto-scroll. Perfect for continuous scrolling at any speed with buttery-smooth motion.
 
