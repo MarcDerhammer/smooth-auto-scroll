@@ -10,4 +10,9 @@ export default defineConfig({
   target: "es2020",
   minify: false,
   external: ["react", "react-dom", "react/jsx-runtime"],
+  outExtension({ format }) {
+    return {
+      js: format === "cjs" ? ".cjs" : ".mjs",
+    };
+  },
 });

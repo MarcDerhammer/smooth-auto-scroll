@@ -1,6 +1,6 @@
 {
   "name": "smooth-auto-scroll",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Smooth auto-scroll React hook and component for ultra-smooth motion at any speed.",
   "license": "MIT",
   "author": "Marc Derhammer <marc.derhammer@gmail.com>",
@@ -12,14 +12,13 @@
     "url": "https://github.com/marcderhammer/smooth-auto-scroll/issues"
   },
   "homepage": "https://github.com/marcderhammer/smooth-auto-scroll#readme",
-  "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
   },
