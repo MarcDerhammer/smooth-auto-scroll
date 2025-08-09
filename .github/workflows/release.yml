@@ -43,7 +43,7 @@ jobs:
       - name: Get previous tag
         id: get_previous_tag
         run: |
-          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -v "^${{ steps.get_version.outputs.VERSION }}$" | head -n 1)
+          PREVIOUS_TAG=$(git tag -l --sort=-version:refname | grep -v "^${{ steps.get_version.outputs.VERSION }}$" | head -n 1)
           if [ -z "$PREVIOUS_TAG" ]; then
             echo "PREVIOUS_TAG=HEAD~10" >> $GITHUB_OUTPUT
             echo "No previous tag found, using HEAD~10 for comparison"
