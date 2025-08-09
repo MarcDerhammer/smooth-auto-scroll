@@ -111,7 +111,7 @@ jobs:
           echo "🔄 Syncing develop branch with main after release"
           git fetch origin
           git checkout develop
-          git merge origin/main --no-edit
+          git merge origin/main --ff-only
           git push origin develop
           if git ls-remote --exit-code --heads origin develop; then
             git checkout develop
