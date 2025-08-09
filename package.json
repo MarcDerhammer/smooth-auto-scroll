@@ -46,7 +46,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "echo '⚠️  Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1",
+    "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then echo '⚠️  Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1; fi",
     "demo": "vite --port 3000",
     "demo:build": "vite build",
     "demo:preview": "vite preview",
