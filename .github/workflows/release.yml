@@ -2,7 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
 
 permissions:
   contents: write
@@ -35,41 +36,46 @@ jobs:
       - name: Run tests (if any)
         run: npm test --if-present
 
-      - name: Create Release
-        id: release
-        uses: google-github-actions/release-please-action@v4
-        with:
-          release-type: node
-          package-name: smooth-auto-scroll
-          changelog-types: |
-            [
-              {"type":"feat","section":"Features","hidden":false},
-              {"type":"fix","section":"Bug Fixes","hidden":false},
-              {"type":"perf","section":"Performance Improvements","hidden":false},
-              {"type":"revert","section":"Reverts","hidden":false},
-              {"type":"docs","section":"Documentation","hidden":false},
-              {"type":"style","section":"Styles","hidden":true},
-              {"type":"refactor","section":"Code Refactoring","hidden":false},
-              {"type":"test","section":"Tests","hidden":true},
-              {"type":"build","section":"Build System","hidden":true},
-              {"type":"ci","section":"Continuous Integration","hidden":true},
-              {"type":"chore","section":"Chores","hidden":true}
-            ]
+      - name: Get tag version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Verify package version matches tag
+        run: |
+          PACKAGE_VERSION="v$(node -p "require('./package.json').version")"
+          TAG_VERSION="${{ steps.get_version.outputs.VERSION }}"
+          if [ "$PACKAGE_VERSION" != "$TAG_VERSION" ]; then
+            echo "❌ Package version ($PACKAGE_VERSION) doesn't match tag ($TAG_VERSION)"
+            exit 1
+          fi
+          echo "✅ Package version matches tag: $TAG_VERSION"
 
       - name: Publish to npm
-        if: ${{ steps.release.outputs.release_created }}
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        if: ${{ steps.release.outputs.release_created }}
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.release.outputs.tag_name }}
-          release_name: Release ${{ steps.release.outputs.tag_name }}
-          body: ${{ steps.release.outputs.body }}
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## Changes in ${{ steps.get_version.outputs.VERSION }}
+            
+            🚀 **smooth-auto-scroll** has been updated!
+            
+            ### Installation
+            ```bash
+            npm install smooth-auto-scroll@${{ steps.get_version.outputs.VERSION }}
+            ```
+            
+            ### Demo
+            Try the interactive demo: https://marcderhammer.github.io/smooth-auto-scroll/
+            
+            ### Full Changelog
+            See all changes: https://github.com/marcderhammer/smooth-auto-scroll/compare/v0.1.0...${{ steps.get_version.outputs.VERSION }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(steps.get_version.outputs.VERSION, '-') }}
