@@ -28,9 +28,24 @@ npm info smooth-auto-scroll
 
 ## Release Process
 
-### Automated Publishing (Only Method)
+### Option 1: GitHub Actions (Recommended) 🚀
 
-#### 1. Create a Release
+**Via GitHub UI:**
+1. Go to **Actions** tab in your GitHub repository
+2. Click **Manual Release** workflow
+3. Click **Run workflow** button
+4. Select version type: `patch` | `minor` | `major` | `prerelease`
+5. For prerelease: choose identifier (`beta`, `alpha`, `rc`, etc.)
+6. Click **Run workflow**
+
+**What happens:**
+- ✅ Version bumped in package.json
+- ✅ Git tag created and pushed
+- ✅ Triggers automatic npm publishing
+- ✅ GitHub release created with changelog
+
+### Option 2: Local Commands
+
 ```bash
 # Make sure you're on main branch
 git checkout main
@@ -51,7 +66,7 @@ npm run release:major
 npm run release:prerelease
 ```
 
-#### 2. What Happens Automatically
+#### What Happens Automatically (Both Options)
 1. **Version bump** - Updates package.json
 2. **Git tag created** - Creates version tag (e.g., `v1.0.1`)
 3. **Push to GitHub** - Pushes commit and tag
