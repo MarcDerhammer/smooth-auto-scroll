@@ -1,6 +1,6 @@
 {
   "name": "smooth-auto-scroll",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Smooth auto-scroll React hook and component for ultra-smooth motion at any speed.",
   "license": "MIT",
   "author": "Marc Derhammer <marc.derhammer@gmail.com>",
@@ -46,7 +46,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then echo '⚠️  Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1; fi",
+    "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then echo '⚠️ Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1; fi",
     "demo": "vite --port 3000",
     "demo:build": "vite build",
     "demo:preview": "vite preview",
