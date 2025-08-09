@@ -11,7 +11,7 @@ permissions:
 jobs:
   check-and-publish:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,7 +34,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           echo "current_version=v$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          
+
           # Check if this version tag already exists
           if git tag -l | grep -q "^v$CURRENT_VERSION$"; then
             echo "version_changed=false" >> $GITHUB_OUTPUT
@@ -104,32 +104,6 @@ jobs:
           draft: false
           prerelease: ${{ contains(steps.version_check.outputs.current_version, '-') }}
           generate_release_notes: true
-
-      - name: Merge main back to develop
-        if: steps.version_check.outputs.version_changed == 'true'
-        run: |
-          echo "🔄 Syncing develop branch with main after release"
-          git fetch origin
-          
-          # Check if develop branch exists
-          if git ls-remote --exit-code --heads origin develop >/dev/null 2>&1; then
-            git checkout develop
-            git pull origin develop
-            
-            # Try fast-forward merge first, fallback to regular merge
-            echo "Attempting to merge main into develop..."
-            if git merge origin/main --ff-only >/dev/null 2>&1; then
-              echo "✅ Fast-forward merge successful"
-            else
-              echo "⚠️  Fast-forward failed, doing regular merge with strategy"
-              git merge origin/main --no-edit --strategy=recursive -X theirs
-            fi
-            
-            git push origin develop
-            echo "✅ Updated develop branch with release changes"
-          else
-            echo "ℹ️  develop branch doesn't exist, skipping sync"
-          fi
 
       - name: No release needed
         if: steps.version_check.outputs.version_changed == 'false'
