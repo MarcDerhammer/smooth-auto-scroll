@@ -9,18 +9,15 @@ This package uses **automated publishing** triggered by GitHub Actions. Local np
 ## Prerequisites
 
 ### 1. GitHub Repository Setup
+
 **Required GitHub Secret:**
+
 - Add `NPM_TOKEN` to GitHub repository secrets
 - Go to Settings → Secrets and variables → Actions
 - Add new repository secret: `NPM_TOKEN`
 
-To get your npm token:
-```bash
-npm login  # Login to npm
-npm token create --read-only=false  # Create automation token
-```
-
 ### 2. Check Package Name Availability
+
 ```bash
 npm info smooth-auto-scroll
 # Should return 404 if available
@@ -31,6 +28,7 @@ npm info smooth-auto-scroll
 ### GitHub Actions UI 🎯
 
 **Via GitHub UI:**
+
 1. Go to **Actions** tab in your GitHub repository
 2. Click **Manual Release** workflow
 3. Click **Run workflow** button
@@ -39,6 +37,7 @@ npm info smooth-auto-scroll
 6. Click **Run workflow**
 
 #### What Happens Automatically
+
 1. **Version bump** - Updates package.json
 2. **Git tag created** - Creates version tag (e.g., `v1.0.1`)
 3. **Push to GitHub** - Pushes commit and tag
@@ -49,6 +48,7 @@ npm info smooth-auto-scroll
 8. **GitHub Release** - Creates release with changelog
 
 ### Alternative: Manual Tag Creation
+
 If you prefer manual control over git:
 
 ```bash
@@ -62,12 +62,14 @@ git push origin main --follow-tags
 ## Pre-Release Checklist
 
 Run this before creating a release:
+
 ```bash
 npm run build        # Build the package
 npm run publish:check  # Dry-run npm publish (local test only)
 ```
 
 ### What Gets Published
+
 - [x] Built files in `dist/` directory
 - [x] `package.json` and `package-lock.json`
 - [x] `README.md` and `LICENSE`
@@ -75,8 +77,9 @@ npm run publish:check  # Dry-run npm publish (local test only)
 - [x] Both CommonJS (`.cjs`) and ESM (`.js`) formats
 
 ### What Gets Excluded
+
 - [x] Source files (`src/` directory)
-- [x] Demo files (`demo/` directory)  
+- [x] Demo files (`demo/` directory)
 - [x] Development configs (`vite.config.ts`, `tsup.config.ts`, etc.)
 - [x] GitHub workflows (`.github/` directory)
 - [x] Development dependencies
@@ -84,6 +87,7 @@ npm run publish:check  # Dry-run npm publish (local test only)
 ## Post-Publishing
 
 ### Verify Publication
+
 ```bash
 # Check if package is published
 npm info smooth-auto-scroll
@@ -95,6 +99,7 @@ npm install smooth-auto-scroll
 ```
 
 ### Monitor Release
+
 - Check GitHub Actions for build status
 - Verify npm package page: https://www.npmjs.com/package/smooth-auto-scroll
 - Test the demo: https://marcderhammer.github.io/smooth-auto-scroll/
@@ -102,19 +107,23 @@ npm install smooth-auto-scroll
 ## Troubleshooting
 
 ### "Version mismatch" Error
+
 - Ensure package.json version matches the git tag
 - Tag format must be `v1.2.3` (with 'v' prefix)
 
-### "NPM_TOKEN invalid" Error  
+### "NPM_TOKEN invalid" Error
+
 - Regenerate npm token: `npm token create --read-only=false`
 - Update GitHub secret with new token
 
 ### "Build failed" Error
+
 - Check GitHub Actions logs
 - Ensure all tests pass locally
 - Verify TypeScript compiles without errors
 
 ### Manual npm publish blocked
+
 - This is intentional! Use GitHub Actions → Manual Release
 - Or create tags manually and let GitHub Actions handle publishing
 
