@@ -33,8 +33,11 @@
   "devDependencies": {
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.3.0",
-    "eslint": "^9.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -46,12 +49,13 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
+    "lint": "eslint src demo --ext .ts,.tsx --report-unused-disable-directives",
+    "lint:fix": "npm run lint -- --fix",
     "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then echo '⚠️ Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1; fi",
     "demo": "vite --port 3000",
     "demo:build": "vite build",
     "demo:preview": "vite preview",
-    "publish:check": "npm publish --dry-run",
-    "size-check": "npm run build && bundlesize"
+    "publish:check": "npm publish --dry-run"
   },
   "keywords": [
     "react",

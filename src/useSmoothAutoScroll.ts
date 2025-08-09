@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 export type SmoothAutoScrollOptions = {
   enabled?: boolean;
@@ -77,10 +77,10 @@ export function useSmoothAutoScroll({
   const resumeTimeoutRef = useRef<number | null>(null);
   const reducedMotionRef = useRef(false);
 
-  const resetVisualShift = () => {
+  const resetVisualShift = useCallback(() => {
     const inner = innerRef.current;
     if (inner) inner.style.transform = "";
-  };
+  }, [innerRef]);
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -268,6 +268,7 @@ export function useSmoothAutoScroll({
     onReachEnd,
     onReachTop,
     onDirectionChange,
+    resetVisualShift,
   ]);
 
   // Update target velocity when pxPerSecond changes without restarting the entire animation
@@ -279,7 +280,7 @@ export function useSmoothAutoScroll({
     const el = containerRef.current;
     if (!el) return;
 
-    const onUser = () => {
+    const onUser = (_event: Event) => {
       if (!pausedRef.current) {
         onPause?.();
       }
@@ -316,7 +317,7 @@ export function useSmoothAutoScroll({
       }
     };
 
-    const onResumeEvent = () => {
+    const onResumeEvent = (_event: Event) => {
       if (resumeDelay > 0) {
         resumeTimeoutRef.current = setTimeout(() => {
           if (pausedRef.current) {
@@ -336,15 +337,15 @@ export function useSmoothAutoScroll({
       }
     };
 
-    const onHover = () => {
+    const onHover = (event: Event) => {
       if (pauseOnHover) {
-        onUser();
+        onUser(event);
       }
     };
 
-    const onFocus = () => {
+    const onFocus = (event: Event) => {
       if (pauseOnFocus) {
-        onUser();
+        onUser(event);
       }
     };
 
@@ -377,10 +378,10 @@ export function useSmoothAutoScroll({
 
     return () => {
       for (const evt of pauseEvents) {
-        el.removeEventListener(evt, onUser as any);
+        el.removeEventListener(evt, onUser);
       }
       for (const evt of resumeEvents) {
-        el.removeEventListener(evt, onResumeEvent as any);
+        el.removeEventListener(evt, onResumeEvent);
       }
       el.removeEventListener("scroll", onScroll);
 
@@ -412,6 +413,7 @@ export function useSmoothAutoScroll({
     pauseOnFocus,
     onPause,
     onResume,
+    resetVisualShift,
   ]);
 
   return {

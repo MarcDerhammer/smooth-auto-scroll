@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { AutoScrollContainer, useSmoothAutoScroll } from "@";
+import { AutoScrollContainer, useSmoothAutoScroll } from "smooth-auto-scroll";
 
 const Demo: React.FC = () => {
   const [speed, setSpeed] = useState(5); // Default speed

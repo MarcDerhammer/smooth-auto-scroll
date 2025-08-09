@@ -8,7 +8,7 @@ export default defineConfig({
   base: "/smooth-auto-scroll/", // GitHub Pages subdirectory
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "smooth-auto-scroll": path.resolve(__dirname, "./src"),
     },
   },
   server: {
