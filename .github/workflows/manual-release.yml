@@ -81,11 +81,31 @@ jobs:
           git push origin ${{ steps.version_bump.outputs.new_version }}
           echo "✅ Created and pushed tag ${{ steps.version_bump.outputs.new_version }}"
 
-      - name: Wait for release workflow
-        run: |
-          echo "🚀 Tag pushed! The release workflow will now:"
-          echo "  1. Build and test the package"
-          echo "  2. Publish to npm"
-          echo "  3. Create GitHub release"
-          echo ""
-          echo "Check the Actions tab for the release workflow status."
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version_bump.outputs.new_version }}
+          name: Release ${{ steps.version_bump.outputs.new_version }}
+          body: |
+            ## Changes in ${{ steps.version_bump.outputs.new_version }}
+
+            🚀 **smooth-auto-scroll** has been updated!
+
+            ### Installation
+            ```bash
+            npm install smooth-auto-scroll@${{ steps.version_bump.outputs.new_version }}
+            ```
+
+            ### Demo
+            Try the interactive demo: https://marcderhammer.github.io/smooth-auto-scroll/
+
+            ### Full Changelog
+            See all changes in the commit history.
+          draft: false
+          prerelease: ${{ contains(steps.version_bump.outputs.new_version, '-') }}
+          generate_release_notes: true
