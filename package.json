@@ -46,17 +46,11 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "echo '⚠️  Use GitHub Actions for publishing. Run: npm run release:patch|minor|major' && exit 1",
+    "prepublishOnly": "echo '⚠️  Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1",
     "demo": "vite --port 3000",
     "demo:build": "vite build",
     "demo:preview": "vite preview",
-    "release:patch": "npm version patch && git push origin main --follow-tags",
-    "release:minor": "npm version minor && git push origin main --follow-tags", 
-    "release:major": "npm version major && git push origin main --follow-tags",
-    "release:prerelease": "npm version prerelease && git push origin main --follow-tags",
     "publish:check": "npm publish --dry-run",
-    "publish:test": "npm pack && tar -tf *.tgz && rm *.tgz",
-    "publish:ready": "npm run build && npm run publish:check",
     "size-check": "npm run build && bundlesize"
   },
   "keywords": [

@@ -2,9 +2,9 @@
 
 This guide walks you through publishing `smooth-auto-scroll` to npm via **GitHub Actions only**.
 
-## 🚀 Tag-Based Release Process
+## 🚀 GitHub Actions Only
 
-This package uses **automated publishing** triggered by git tags. Manual npm publishing is disabled for security and consistency.
+This package uses **automated publishing** triggered by GitHub Actions. Local npm publishing is completely disabled for security and consistency.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ npm info smooth-auto-scroll
 
 ## Release Process
 
-### Option 1: GitHub Actions (Recommended) 🚀
+### GitHub Actions UI 🎯
 
 **Via GitHub UI:**
 1. Go to **Actions** tab in your GitHub repository
@@ -38,35 +38,7 @@ npm info smooth-auto-scroll
 5. For prerelease: choose identifier (`beta`, `alpha`, `rc`, etc.)
 6. Click **Run workflow**
 
-**What happens:**
-- ✅ Version bumped in package.json
-- ✅ Git tag created and pushed
-- ✅ Triggers automatic npm publishing
-- ✅ GitHub release created with changelog
-
-### Option 2: Local Commands
-
-```bash
-# Make sure you're on main branch
-git checkout main
-git pull origin main
-
-# Choose your release type:
-
-# Patch release (1.0.0 → 1.0.1) - Bug fixes
-npm run release:patch
-
-# Minor release (1.0.0 → 1.1.0) - New features  
-npm run release:minor
-
-# Major release (1.0.0 → 2.0.0) - Breaking changes
-npm run release:major
-
-# Prerelease (1.0.0 → 1.0.1-0) - Beta/alpha
-npm run release:prerelease
-```
-
-#### What Happens Automatically (Both Options)
+#### What Happens Automatically
 1. **Version bump** - Updates package.json
 2. **Git tag created** - Creates version tag (e.g., `v1.0.1`)
 3. **Push to GitHub** - Pushes commit and tag
@@ -76,12 +48,11 @@ npm run release:prerelease
 7. **npm publish** - Publishes to npm registry
 8. **GitHub Release** - Creates release with changelog
 
-### Manual Tag Creation (Alternative)
-If you prefer manual control:
+### Alternative: Manual Tag Creation
+If you prefer manual control over git:
 
 ```bash
-# Update version in package.json manually
-# Then create and push tag:
+# Update version in package.json manually, then:
 git add package.json package-lock.json
 git commit -m "chore: bump version to 1.0.1"
 git tag v1.0.1
@@ -92,8 +63,8 @@ git push origin main --follow-tags
 
 Run this before creating a release:
 ```bash
-npm run publish:ready  # Runs pre-publish checks
-npm run publish:check  # Dry-run npm publish
+npm run build        # Build the package
+npm run publish:check  # Dry-run npm publish (local test only)
 ```
 
 ### What Gets Published
@@ -144,7 +115,7 @@ npm install smooth-auto-scroll
 - Verify TypeScript compiles without errors
 
 ### Manual npm publish blocked
-- This is intentional! Use `npm run release:patch|minor|major`
+- This is intentional! Use GitHub Actions → Manual Release
 - Or create tags manually and let GitHub Actions handle publishing
 
 ## Security Notes
@@ -153,4 +124,5 @@ npm install smooth-auto-scroll
 - ✅ Publishing only happens via GitHub Actions
 - ✅ All releases are tagged and traceable
 - ✅ Build and test verification before publishing
-- ✅ No manual npm publish access needed
+- ✅ No local npm access required
+- ✅ Team-friendly workflow via GitHub UI
