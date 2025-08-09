@@ -9,4 +9,8 @@ export default defineConfig({
   format: ["esm", "cjs"],
   target: "es2020",
   minify: false,
+  external: ["react", "react-dom"],
+  esbuildOptions(options) {
+    options.jsx = "automatic";
+  },
 });
