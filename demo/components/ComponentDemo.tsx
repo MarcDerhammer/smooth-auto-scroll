@@ -1,5 +1,5 @@
 import React from "react";
-import { AutoScrollContainer } from "smooth-auto-scroll";
+import { AutoScrollContainer } from "../../src";
 import { DemoConfig } from "../types";
 import { generateContent } from "../utils/contentGenerator";
 

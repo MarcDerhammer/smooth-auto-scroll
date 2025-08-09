@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { useSmoothAutoScroll } from "smooth-auto-scroll";
+import { useSmoothAutoScroll } from "../../src";
 import { DemoConfig } from "../types";
 import { generateContent } from "../utils/contentGenerator";
 
