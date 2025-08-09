@@ -119,7 +119,18 @@ jobs:
             git checkout develop
             git merge origin/main --ff-only
             git push origin develop
-            echo "✅ Updated develop branch with release changes"
+          if git ls-remote --exit-code --heads origin develop; then
+            git checkout develop
+            # Try fast-forward merge first
+            if git merge --ff-only origin/main; then
+              echo "✅ Fast-forwarded develop to main"
+              git push origin develop
+            else
+              echo "⚠️ Fast-forward failed, attempting regular merge"
+              git merge origin/main --no-edit
+              git push origin develop
+              echo "✅ Merged main into develop with a merge commit"
+            fi
           else
             echo "⚠️  'develop' branch does not exist. Skipping sync."
           fi
