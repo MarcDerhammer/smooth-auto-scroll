@@ -58,21 +58,23 @@ git push -u origin release/v1.2.3
 3. ✅ **Creates git tag** (e.g., `v1.2.3`)
 4. ✅ **Publishes to npm**
 5. ✅ **Creates GitHub release** with changelog
+6. ✅ **Syncs develop branch** - merges main back to develop
 
 **If no version change is detected, nothing happens** - safe merges! ✨
 
 ### 4. Clean Up 🧹
 
 ```bash
-# Merge back to develop
+# Delete local release branch (develop already synced automatically)
 git checkout develop
-git merge main
-git push origin develop
-
-# Delete release branch
+git pull origin develop  # Get the synced changes
 git branch -d release/v1.2.3
+
+# Delete remote release branch
 git push origin --delete release/v1.2.3
 ```
+
+**Note**: The develop branch is automatically synced with main after every release!
 
 ## Version Types
 

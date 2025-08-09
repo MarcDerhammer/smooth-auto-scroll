@@ -105,6 +105,16 @@ jobs:
           prerelease: ${{ contains(steps.version_check.outputs.current_version, '-') }}
           generate_release_notes: true
 
+      - name: Merge main back to develop
+        if: steps.version_check.outputs.version_changed == 'true'
+        run: |
+          echo "🔄 Syncing develop branch with main after release"
+          git fetch origin
+          git checkout develop
+          git merge origin/main --no-edit
+          git push origin develop
+          echo "✅ Updated develop branch with release changes"
+
       - name: No release needed
         if: steps.version_check.outputs.version_changed == 'false'
         run: |
