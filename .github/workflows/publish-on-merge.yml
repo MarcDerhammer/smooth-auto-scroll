@@ -115,7 +115,9 @@ jobs:
           git push origin develop
           if git ls-remote --exit-code --heads origin develop; then
             git checkout develop
-            git merge origin/main --no-edit
+          if git ls-remote --exit-code --heads origin develop; then
+            git checkout develop
+            git merge origin/main --ff-only
             git push origin develop
             echo "✅ Updated develop branch with release changes"
           else
