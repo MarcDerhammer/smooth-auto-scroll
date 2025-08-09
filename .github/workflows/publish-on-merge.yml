@@ -11,12 +11,12 @@ permissions:
 jobs:
   check-and-publish:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -34,7 +34,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(node -p "require('./package.json').version")
           echo "current_version=v$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          
+
           # Check if this version tag already exists
           if git tag -l | grep -q "^v$CURRENT_VERSION$"; then
             echo "version_changed=false" >> $GITHUB_OUTPUT
@@ -104,36 +104,6 @@ jobs:
           draft: false
           prerelease: ${{ contains(steps.version_check.outputs.current_version, '-') }}
           generate_release_notes: true
-
-      - name: Merge main back to develop
-        if: steps.version_check.outputs.version_changed == 'true'
-        run: |
-          echo "🔄 Syncing develop branch with main after release"
-          git fetch origin
-          git checkout develop
-          git merge origin/main --ff-only
-          git push origin develop
-          if git ls-remote --exit-code --heads origin develop; then
-            git checkout develop
-          if git ls-remote --exit-code --heads origin develop; then
-            git checkout develop
-            git merge origin/main --ff-only
-            git push origin develop
-          if git ls-remote --exit-code --heads origin develop; then
-            git checkout develop
-            # Try fast-forward merge first
-            if git merge --ff-only origin/main; then
-              echo "✅ Fast-forwarded develop to main"
-              git push origin develop
-            else
-              echo "⚠️ Fast-forward failed, attempting regular merge"
-              git merge origin/main --no-edit
-              git push origin develop
-              echo "✅ Merged main into develop with a merge commit"
-            fi
-          else
-            echo "⚠️  'develop' branch does not exist. Skipping sync."
-          fi
 
       - name: No release needed
         if: steps.version_check.outputs.version_changed == 'false'
