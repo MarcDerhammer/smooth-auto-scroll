@@ -14,12 +14,12 @@
   "homepage": "https://github.com/marcderhammer/smooth-auto-scroll#readme",
   "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
@@ -46,7 +46,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "prepublishOnly": "echo '⚠️  Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1",
+    "prepublishOnly": "if [ \"$CI\" != \"true\" ]; then echo '⚠️ Use GitHub Actions for publishing. Go to Actions → Manual Release' && exit 1; fi",
     "demo": "vite --port 3000",
     "demo:build": "vite build",
     "demo:preview": "vite preview",
