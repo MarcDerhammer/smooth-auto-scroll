@@ -113,7 +113,7 @@ npm install smooth-auto-scroll
 
 ### "NPM_TOKEN invalid" Error
 
-- Regenerate npm token: `npm token create --read-only=false`
+- Regenerate npm token: `npm token create --type=publish`
 - Update GitHub secret with new token
 
 ### "Build failed" Error
